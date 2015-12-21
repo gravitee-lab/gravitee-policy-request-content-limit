@@ -63,12 +63,12 @@ public class RequestContentLimitPolicy {
 
                         @Override
                         public int httpStatusCode() {
-                            return HttpStatusCode.BAD_REQUEST_400;
+                            return HttpStatusCode.REQUEST_ENTITY_TOO_LARGE_413;
                         }
 
                         @Override
                         public String message() {
-                            return "Your request has been blocked because content's length is too large !";
+                            return "The request is larger than the server is willing or able to process.";
                         }
                     });
                 } else {
