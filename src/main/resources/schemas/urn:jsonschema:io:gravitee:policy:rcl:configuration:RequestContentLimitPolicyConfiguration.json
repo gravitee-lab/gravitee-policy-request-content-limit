@@ -1,0 +1,12 @@
+{
+  "type" : "object",
+  "title": "Request content limit",
+  "id" : "urn:jsonschema:io:gravitee:policy:rcl:configuration:RequestContentLimitPolicyConfiguration",
+  "properties" : {
+    "limit" : {
+      "title": "Limit",
+      "type" : "integer"
+    }
+  },
+  "required": ["limit"]
+}
