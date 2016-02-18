@@ -1,0 +1,42 @@
+=== Request Content Limit Policy
+
+https://github.com/gravitee-io/gravitee-policy-request-content-limit[Source code],
+image:http://build.gravitee.io/jenkins/buildStatus/icon?job=gravitee-policy-request-content-limit["Build status", link="http://build.gravitee.io/jenkins/job/gravitee-policy-request-content-limit/"]
+
+==== Scope
+
+|===
+|onRequest |onResponse
+
+|
+|
+
+|===
+
+==== Description
+
+Todo
+
+==== Configuration
+
+You can configure the policy with the following options :
+
+|===
+|Property |Required |Description |Type |Default
+
+|Todo
+|Todo
+|Todo
+|Todo
+|_todo_
+
+|===
+
+
+[source, json]
+.Sample
+----
+"request-content-limit": {
+  "todo": true
+}
+----
