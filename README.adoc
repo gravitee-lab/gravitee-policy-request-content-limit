@@ -1,7 +1,9 @@
 = Request Content Limit Policy
 
-https://github.com/gravitee-io/gravitee-policy-request-content-limit[Source code],
-image:http://build.gravitee.io/jenkins/buildStatus/icon?job=gravitee-policy-request-content-limit["Build status", link="http://build.gravitee.io/jenkins/job/gravitee-policy-request-content-limit/"]
+ifdef::env-github[]
+image:https://ci.gravitee.io/buildStatus/icon?job=gravitee-io/gravitee-policy-request-content-limit/master["Build status", link="https://ci.gravitee.io/job/gravitee-io/job/gravitee-policy-request-content-limit/"]
+image:https://badges.gitter.im/Join Chat.svg["Gitter", link="https://gitter.im/gravitee-io/gravitee-io?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge"]
+endif::[]
 
 == Scope
 
