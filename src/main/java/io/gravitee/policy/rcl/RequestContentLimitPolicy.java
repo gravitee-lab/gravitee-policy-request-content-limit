@@ -55,61 +55,22 @@ public class RequestContentLimitPolicy {
                 int contentLength = Integer.parseInt(contentLengthHeader);
 
                 if (contentLength > requestContentLimitPolicyConfiguration.getLimit()) {
-                    policyChain.failWith(new PolicyResult() {
-                        @Override
-                        public boolean isFailure() {
-                            return true;
-                        }
-
-                        @Override
-                        public int httpStatusCode() {
-                            return HttpStatusCode.REQUEST_ENTITY_TOO_LARGE_413;
-                        }
-
-                        @Override
-                        public String message() {
-                            return "The request is larger than the server is willing or able to process.";
-                        }
-                    });
+                    policyChain.failWith(PolicyResult.failure(
+                            HttpStatusCode.REQUEST_ENTITY_TOO_LARGE_413,
+                            "The request is larger than the server is willing or able to process."));
                 } else {
                     policyChain.doNext(request, response);
                 }
             } catch (NumberFormatException nfe) {
-                policyChain.failWith(new PolicyResult() {
-                    @Override
-                    public boolean isFailure() {
-                        return true;
-                    }
-
-                    @Override
-                    public int httpStatusCode() {
-                        return HttpStatusCode.BAD_REQUEST_400;
-                    }
-
-                    @Override
-                    public String message() {
-                        return "Content-length is not a valid integer !";
-                    }
-                });
+                policyChain.failWith(PolicyResult.failure(
+                        HttpStatusCode.BAD_REQUEST_400,
+                        "Content-length is not a valid integer !"));
             }
         } else {
-            policyChain.failWith(new PolicyResult() {
-                @Override
-                public boolean isFailure() {
-                    return true;
-                }
-
-                @Override
-                public int httpStatusCode() {
-                    return HttpStatusCode.LENGTH_REQUIRED_411;
-                }
-
-                @Override
-                public String message() {
-                    return "The request did not specify the length of its content, which is required by the " +
-                                    "requested resource.";
-                }
-            });
+            policyChain.failWith(PolicyResult.failure(
+                    HttpStatusCode.LENGTH_REQUIRED_411,
+                    "The request did not specify the length of its content, which is required by the " +
+                            "requested resource."));
         }
     }
 }
