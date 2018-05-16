@@ -19,9 +19,13 @@ import io.gravitee.common.http.HttpHeaders;
 import io.gravitee.common.http.HttpStatusCode;
 import io.gravitee.gateway.api.Request;
 import io.gravitee.gateway.api.Response;
+import io.gravitee.policy.api.ChainScope;
 import io.gravitee.policy.api.PolicyChain;
 import io.gravitee.policy.api.PolicyResult;
+import io.gravitee.policy.api.annotations.Category;
 import io.gravitee.policy.api.annotations.OnRequest;
+import io.gravitee.policy.api.annotations.Policy;
+import io.gravitee.policy.api.annotations.Scope;
 import io.gravitee.policy.rcl.configuration.RequestContentLimitPolicyConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +33,10 @@ import org.slf4j.LoggerFactory;
 /**
  * @author David BRASSELY (brasseld at gmail.com)
  */
+@Policy(
+        category = @Category(io.gravitee.policy.api.Category.SECURITY),
+        scope = @Scope(ChainScope.API)
+)
 public class RequestContentLimitPolicy {
 
     /**
