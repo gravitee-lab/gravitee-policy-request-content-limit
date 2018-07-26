@@ -9,28 +9,34 @@ endif::[]
 
 |===
 |onRequest |onResponse
-
-|
-|
-
+|X|
 |===
 
 == Description
 
-Todo
+This policy allows to specify a max limit request content lenght allowed on a request.
+This limit is compared to the content length header of the request.
+
+== Possible response
+
+|===
+|Error |description
+|400|Content-length is not a valid integer !
+|411|The request did not specify the length of its content, which is required by the requested resource.
+|413|The request is larger than the server is willing or able to process.
+|===
 
 == Configuration
 
 You can configure the policy with the following options :
 
 |===
-|Property |Required |Description |Type |Default
+|Property |Required |Description |Type
 
-|Todo
-|Todo
-|Todo
-|Todo
-|_todo_
+|limit
+|true
+|The limit of the request content length allowed
+|int
 
 |===
 
@@ -39,6 +45,6 @@ You can configure the policy with the following options :
 .Sample
 ----
 "request-content-limit": {
-  "todo": true
+  "limit": 1000
 }
 ----
