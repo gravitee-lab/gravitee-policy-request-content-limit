@@ -19,15 +19,21 @@ import io.gravitee.common.http.HttpHeaders;
 import io.gravitee.common.http.HttpStatusCode;
 import io.gravitee.gateway.api.Request;
 import io.gravitee.gateway.api.Response;
+import io.gravitee.gateway.api.buffer.Buffer;
+import io.gravitee.gateway.api.stream.BufferedReadWriteStream;
+import io.gravitee.gateway.api.stream.ReadWriteStream;
+import io.gravitee.gateway.api.stream.SimpleReadWriteStream;
 import io.gravitee.policy.api.PolicyChain;
 import io.gravitee.policy.api.PolicyResult;
 import io.gravitee.policy.api.annotations.OnRequest;
+import io.gravitee.policy.api.annotations.OnRequestContent;
 import io.gravitee.policy.rcl.configuration.RequestContentLimitPolicyConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author David BRASSELY (brasseld at gmail.com)
+ * @author David BRASSELY (david.brassely at graviteesource.com)
+ * @author GraviteeSource Team
  */
 public class RequestContentLimitPolicy {
 
@@ -66,11 +72,53 @@ public class RequestContentLimitPolicy {
                         HttpStatusCode.BAD_REQUEST_400,
                         "Content-length is not a valid integer !"));
             }
+        } else if (isTransferEncoding(request)) {
+            // Chunked transfer encoding, the content-length is not specified, just return the policy chain
+            policyChain.doNext(request, response);
         } else {
             policyChain.failWith(PolicyResult.failure(
                     HttpStatusCode.LENGTH_REQUIRED_411,
                     "The request did not specify the length of its content, which is required by the " +
                             "requested resource."));
         }
+    }
+
+    @OnRequestContent
+    public ReadWriteStream onRequestContent(Request request,  PolicyChain policyChain) {
+        // Content stream must be used only if request contains Transfer-encoding header.
+        if (isTransferEncoding(request)) {
+            return new BufferedReadWriteStream() {
+
+                private long contentLength = 0;
+
+                @Override
+                public SimpleReadWriteStream<Buffer> write(Buffer content) {
+                    contentLength += content.length();
+
+                    if (contentLength > requestContentLimitPolicyConfiguration.getLimit()) {
+                        policyChain.streamFailWith(PolicyResult.failure(
+                                HttpStatusCode.REQUEST_ENTITY_TOO_LARGE_413,
+                                "The request is larger than the server is willing or able to process."
+                        ));
+
+                        return this;
+                    } else {
+                        return super.write(content);
+                    }
+                }
+
+                @Override
+                public void end() {
+                    super.end();
+                }
+            };
+        }
+
+        return null;
+    }
+
+    private boolean isTransferEncoding(Request request) {
+        String transferEncoding = request.headers().getFirst(HttpHeaders.TRANSFER_ENCODING);
+        return (transferEncoding != null && !transferEncoding.isEmpty());
     }
 }

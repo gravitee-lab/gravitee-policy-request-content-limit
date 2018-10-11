@@ -18,17 +18,18 @@ package io.gravitee.policy.rcl.configuration;
 import io.gravitee.policy.api.PolicyConfiguration;
 
 /**
- * @author David BRASSELY (brasseld at gmail.com)
+ * @author David BRASSELY (david.brassely at graviteesource.com)
+ * @author GraviteeSource Team
  */
 public class RequestContentLimitPolicyConfiguration implements PolicyConfiguration {
 
-    private int limit;
+    private long limit;
 
-    public int getLimit() {
+    public long getLimit() {
         return limit;
     }
 
-    public void setLimit(int limit) {
+    public void setLimit(long limit) {
         this.limit = limit;
     }
 }
