@@ -66,7 +66,7 @@ public class RequestContentLimitPolicyTest {
 
         ArgumentCaptor<PolicyResult> argument = ArgumentCaptor.forClass(PolicyResult.class);
         verify(policyChain, times(1)).failWith(argument.capture());
-        Assert.assertEquals(HttpStatusCode.LENGTH_REQUIRED_411, argument.getValue().httpStatusCode());
+        Assert.assertEquals(HttpStatusCode.LENGTH_REQUIRED_411, argument.getValue().statusCode());
     }
 
     @Test
@@ -80,7 +80,7 @@ public class RequestContentLimitPolicyTest {
 
         ArgumentCaptor<PolicyResult> argument = ArgumentCaptor.forClass(PolicyResult.class);
         verify(policyChain, times(1)).failWith(argument.capture());
-        Assert.assertEquals(HttpStatusCode.BAD_REQUEST_400, argument.getValue().httpStatusCode());
+        Assert.assertEquals(HttpStatusCode.BAD_REQUEST_400, argument.getValue().statusCode());
     }
 
     @Test
@@ -107,7 +107,7 @@ public class RequestContentLimitPolicyTest {
 
         ArgumentCaptor<PolicyResult> argument = ArgumentCaptor.forClass(PolicyResult.class);
         verify(policyChain, times(1)).failWith(argument.capture());
-        Assert.assertEquals(HttpStatusCode.REQUEST_ENTITY_TOO_LARGE_413, argument.getValue().httpStatusCode());
+        Assert.assertEquals(HttpStatusCode.REQUEST_ENTITY_TOO_LARGE_413, argument.getValue().statusCode());
     }
 
     @Test

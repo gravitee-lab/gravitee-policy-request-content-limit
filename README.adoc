@@ -48,3 +48,40 @@ You can configure the policy with the following options :
   "limit": 1000
 }
 ----
+
+== Errors
+
+=== Default error
+|===
+|Code |Message
+
+.^| ```400```
+| The limit from the configuration is not correct.
+
+.^| ```413```
+| Incoming HTTP request payload exceed the size limit.
+
+.^| ```411```
+| The HTTP request is not chunked and does not specify the `Content-Length` header.
+
+|===
+
+=== Override errors
+If you're looking to override the default response provided by the policy, you can do it
+thanks to the response templates feature. These templates must be define at the API level (see `Response Templates`
+from the `Proxy` menu).
+
+Here are the error keys send by this policy:
+
+[cols="2*", options="header"]
+|===
+^|Key
+^|Parameters
+
+.^|REQUEST_CONTENT_LIMIT_TOO_LARGE
+^.^|length - limit
+
+.^|REQUEST_CONTENT_LIMIT_LENGTH_REQUIRED
+^.^|limit
+
+|===

@@ -17,6 +17,7 @@ package io.gravitee.policy.rcl;
 
 import io.gravitee.common.http.HttpHeaders;
 import io.gravitee.common.http.HttpStatusCode;
+import io.gravitee.common.util.Maps;
 import io.gravitee.gateway.api.Request;
 import io.gravitee.gateway.api.Response;
 import io.gravitee.gateway.api.buffer.Buffer;
@@ -42,6 +43,9 @@ public class RequestContentLimitPolicy {
      */
     private final static Logger LOGGER = LoggerFactory.getLogger(RequestContentLimitPolicy.class);
 
+    private static final String REQUEST_CONTENT_LIMIT_TOO_LARGE = "REQUEST_CONTENT_LIMIT_TOO_LARGE";
+    private static final String REQUEST_CONTENT_LIMIT_LENGTH_REQUIRED = "REQUEST_CONTENT_LIMIT_LENGTH_REQUIRED";
+
     /**
      * Request content limit configuration
      */
@@ -61,9 +65,15 @@ public class RequestContentLimitPolicy {
                 int contentLength = Integer.parseInt(contentLengthHeader);
 
                 if (contentLength > requestContentLimitPolicyConfiguration.getLimit()) {
-                    policyChain.failWith(PolicyResult.failure(
-                            HttpStatusCode.REQUEST_ENTITY_TOO_LARGE_413,
-                            "The request is larger than the server is willing or able to process."));
+                    policyChain.failWith(
+                            PolicyResult.failure(
+                                    REQUEST_CONTENT_LIMIT_TOO_LARGE,
+                                    HttpStatusCode.REQUEST_ENTITY_TOO_LARGE_413,
+                            "The request is larger than the server is willing or able to process.",
+                                    Maps.<String, Object>builder()
+                                            .put("length", contentLength)
+                                            .put("limit", requestContentLimitPolicyConfiguration.getLimit())
+                                            .build()));
                 } else {
                     policyChain.doNext(request, response);
                 }
@@ -76,10 +86,15 @@ public class RequestContentLimitPolicy {
             // Chunked transfer encoding, the content-length is not specified, just return the policy chain
             policyChain.doNext(request, response);
         } else {
-            policyChain.failWith(PolicyResult.failure(
-                    HttpStatusCode.LENGTH_REQUIRED_411,
-                    "The request did not specify the length of its content, which is required by the " +
-                            "requested resource."));
+            policyChain.failWith(
+                    PolicyResult.failure(
+                            REQUEST_CONTENT_LIMIT_LENGTH_REQUIRED,
+                            HttpStatusCode.LENGTH_REQUIRED_411,
+                            "The request did not specify the length of its content, which is required by the " +
+                                    "requested resource.",
+                            Maps.<String, Object>builder()
+                                    .put("limit", requestContentLimitPolicyConfiguration.getLimit())
+                                    .build()));
         }
     }
 
@@ -96,10 +111,15 @@ public class RequestContentLimitPolicy {
                     contentLength += content.length();
 
                     if (contentLength > requestContentLimitPolicyConfiguration.getLimit()) {
-                        policyChain.streamFailWith(PolicyResult.failure(
-                                HttpStatusCode.REQUEST_ENTITY_TOO_LARGE_413,
-                                "The request is larger than the server is willing or able to process."
-                        ));
+                        policyChain.streamFailWith(
+                                PolicyResult.failure(
+                                        REQUEST_CONTENT_LIMIT_TOO_LARGE,
+                                        HttpStatusCode.REQUEST_ENTITY_TOO_LARGE_413,
+                                        "The request is larger than the server is willing or able to process.",
+                                        Maps.<String, Object>builder()
+                                                .put("length", contentLength)
+                                                .put("limit", requestContentLimitPolicyConfiguration.getLimit())
+                                                .build()));
 
                         return this;
                     } else {
